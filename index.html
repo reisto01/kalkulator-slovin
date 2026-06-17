@@ -1,1 +1,402 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Kalkulator Slovin</title>
 
+<link rel="icon"
+href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧮</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter', sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+
+    background:linear-gradient(
+        -45deg,
+        #fffaf5,
+        #ffe8d6,
+        #ffd7ba,
+        #fff3e6,
+        #ffffff
+    );
+
+    background-size:400% 400%;
+    animation:gradientMove 15s ease infinite;
+}
+
+.container{
+    display:flex;
+    gap:25px;
+    align-items:flex-start;
+    z-index:2;
+}
+
+.history-panel{
+    width:350px;
+    background:rgba(255,255,255,.75);
+    backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,.5);
+    border-radius:24px;
+    padding:25px;
+    color:#6b4f4f;
+    box-shadow:0 10px 40px rgba(0,0,0,.18);
+    animation:cardEnter 1.1s ease;
+}
+
+.history-panel h3{
+    text-align:center;
+    margin-bottom:15px;
+}
+
+.history-table{
+    max-height:320px;
+    overflow-y:auto;
+}
+
+#historyTable{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+}
+
+#historyTable th{
+    padding:10px;
+    background:rgba(255,255,255,.15);
+    border-radius:8px;
+}
+
+#historyTable td{
+    padding:10px;
+    text-align:center;
+}
+
+#historyTable tbody tr{
+    border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.clear-btn{
+    background:linear-gradient(
+        135deg,
+        #d86c7a,
+        #c94f63
+    );
+    color:white;
+}
+
+.clear-btn:hover{
+    background:#c82333;
+}
+
+@media(max-width:900px){
+
+    body{
+        overflow:auto;
+        padding:20px;
+    }
+
+    .container{
+        flex-direction:column;
+        align-items:center;
+    }
+
+    .history-panel{
+        width:420px;
+    }
+}
+
+@keyframes gradientMove{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+.bg-decoration{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+}
+
+.bg-decoration span{
+    position:absolute;
+    font-size:42px;
+    opacity:.18;
+    animation:floating 7s ease-in-out infinite;
+}
+
+.bg-decoration span:nth-child(1){top:8%; left:8%;}
+.bg-decoration span:nth-child(2){top:15%; right:10%;}
+.bg-decoration span:nth-child(3){bottom:12%; left:12%;}
+.bg-decoration span:nth-child(4){top:50%; right:8%;}
+.bg-decoration span:nth-child(5){bottom:18%; right:18%;}
+.bg-decoration span:nth-child(6){top:35%; left:14%;}
+.bg-decoration span:nth-child(7){bottom:30%; right:35%;}
+
+@keyframes floating{
+    0%{transform:translateY(0px) rotate(0deg);}
+    50%{transform:translateY(-20px) rotate(8deg);}
+    100%{transform:translateY(0px) rotate(0deg);}
+}
+
+.glow{
+    position:absolute;
+    width:500px;
+    height:500px;
+    border-radius:50%;
+    background:rgba(255,220,200,.35);
+    filter:blur(120px);
+    top:-100px;
+    left:-100px;
+    animation:floatGlow 10s ease-in-out infinite;
+}
+
+@keyframes floatGlow{
+    0%,100%{
+        transform:translate(0,0);
+    }
+    50%{
+        transform:translate(80px,50px);
+    }
+}
+.card{
+    width:420px;
+    background:rgba(255,255,255,.75);
+    backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,.5);
+    border-radius:24px;
+    padding:30px;
+    color:#6b4f4f;
+    box-shadow:0 10px 40px rgba(0,0,0,.18);
+    animation:cardEnter .9s ease;
+    z-index:2;
+}
+
+@keyframes cardEnter{
+    from{
+        opacity:0;
+        transform:translateY(30px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+h2{
+    text-align:center;
+    font-size:28px;
+    margin-bottom:6px;
+}
+
+.sub{
+    text-align:center;
+    opacity:.85;
+    margin-bottom:24px;
+    font-size:14px;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+}
+
+input{
+    width:100%;
+    padding:13px;
+    border:none;
+    outline:none;
+    border-radius:12px;
+    margin-bottom:18px;
+    font-size:16px;
+    transition:.25s;
+}
+
+input:focus{
+    transform:scale(1.02);
+    box-shadow:0 0 0 4px rgba(255,255,255,.15);
+}
+
+button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(
+        135deg,
+        #e89b7a,
+        #d97a5c
+    );
+    color:white;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.3s ease;
+}
+
+button:hover{
+    transform:translateY(-3px) scale(1.02);
+    box-shadow:0 12px 30px rgba(217,122,92,.35);
+}
+
+.result{
+    margin-top:22px;
+    padding:18px;
+    border-radius:16px;
+    background:rgba(255,255,255,.12);
+    display:none;
+}
+
+.result.show{
+    display:block;
+    animation:fadeUp .5s ease;
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.result p{
+    margin:8px 0;
+}
+
+.final{
+    font-size:28px;
+    font-weight:700;
+    text-align:center;
+    margin-top:14px;
+}
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="bg-decoration">
+    <span>🤍</span>
+    <span>🌸</span>
+    <span>✨</span>
+    <span>☁️</span>
+    <span>🦋</span>
+    <span>🤍</span>
+    <span>🌸</span>
+</div>
+
+<div class="container">
+
+<div class="card">
+    <h2>Kalkulator Slovin</h2>
+    <div class="sub">Hitung jumlah sampel penelitian dengan cepat</div>
+
+    <label>Jumlah Populasi (N)</label>
+    <input type="number" id="N" placeholder="contoh: 1000">
+
+    <label>Margin Error (%)</label>
+    <input type="number" id="e" value="5">
+
+    <button onclick="hitungSlovin()">Hitung Sekarang</button>
+
+    <div class="result" id="resultBox">
+        <p id="step1"></p>
+        <p id="step2"></p>
+        <p id="step3"></p>
+        <div class="final" id="hasil"></div>
+    </div>
+</div>
+
+<div class="history-panel">
+
+    <h3>📋 Riwayat Perhitungan</h3>
+
+    <div class="history-table">
+        <table id="historyTable">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>N</th>
+                    <th>Error</th>
+                    <th>Hasil</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <button class="clear-btn" onclick="hapusRiwayat()">
+        🗑 Hapus Riwayat
+    </button>
+
+</div>
+
+</div>
+
+<script>
+let nomor = 0;
+function hitungSlovin(){
+
+    let N = parseFloat(document.getElementById("N").value);
+    let e = parseFloat(document.getElementById("e").value)/100;
+
+    if(!N || !e){
+        alert("Lengkapi data terlebih dahulu");
+        return;
+    }
+
+    let e2 = e*e;
+    let penyebut = 1 + (N * e2);
+    let n = N / penyebut;
+
+    document.getElementById("step1").innerHTML =
+        "e² = " + e2.toFixed(4);
+
+    document.getElementById("step2").innerHTML =
+        "N × e² = " + (N*e2).toFixed(2);
+
+    document.getElementById("step3").innerHTML =
+        "1 + (N × e²) = " + penyebut.toFixed(2);
+
+    document.getElementById("hasil").innerHTML =
+        "n = " + Math.ceil(n);
+
+    document.getElementById("resultBox").classList.add("show");
+    nomor++;
+    let tbody = document.querySelector("#historyTable tbody");
+    tbody.insertAdjacentHTML(
+        "afterbegin",
+        `
+        <tr>
+            <td>${nomor}</td>
+            <td>${N}</td>
+            <td>${e*100}%</td>
+            <td>${Math.ceil(n)}</td>
+        </tr>
+        `
+    );
+}
+function hapusRiwayat(){
+
+    document.querySelector("#historyTable tbody").innerHTML = "";
+
+    nomor = 0;
+}
+</script>
+
+</body>
+</html>
